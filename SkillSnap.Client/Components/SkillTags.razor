@@ -29,14 +29,14 @@
 
     <div class="add-skill-form">
         <h4>Add New Skill</h4>
-        <input type="text" @bind="newSkill.Name" placeholder="Skill Name" class="form-input" />
-        <select @bind="newSkill.Level" class="form-input">
+        <input type="text" @bind="newSkill.Name" placeholder="Skill Name" class="form-input" autocomplete="off" />
+        <select @bind="newSkill.Level" class="form-input" autocomplete="off">
             <option value="">Select Level</option>
             <option value="Beginner">Beginner</option>
             <option value="Intermediate">Intermediate</option>
             <option value="Advanced">Advanced</option>
         </select>
-        <input type="number" @bind="newSkill.PortfolioUserId" placeholder="User ID (default: 1)" class="form-input" />
+        <input type="number" @bind="newSkill.PortfolioUserId" placeholder="User ID (default: 1)" class="form-input" autocomplete="off" />
         <button @onclick="AddSkill" class="btn-add">Add Skill</button>
     </div>
 </div>

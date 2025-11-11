@@ -30,10 +30,10 @@
 
     <div class="add-project-form">
         <h4>Add New Project</h4>
-        <input type="text" @bind="newProject.Title" placeholder="Project Title" class="form-input" />
-        <input type="text" @bind="newProject.Description" placeholder="Description" class="form-input" />
-        <input type="text" @bind="newProject.ImageUrl" placeholder="Image URL" class="form-input" />
-        <input type="number" @bind="newProject.PortfolioUserId" placeholder="User ID (default: 1)" class="form-input" />
+        <input type="text" @bind="newProject.Title" placeholder="Project Title" class="form-input" autocomplete="off" />
+        <input type="text" @bind="newProject.Description" placeholder="Description" class="form-input" autocomplete="off" />
+        <input type="text" @bind="newProject.ImageUrl" placeholder="Image URL" class="form-input" autocomplete="off" />
+        <input type="number" @bind="newProject.PortfolioUserId" placeholder="User ID (default: 1)" class="form-input" autocomplete="off" />
         <button @onclick="AddProject" class="btn-add">Add Project</button>
     </div>
 </div>

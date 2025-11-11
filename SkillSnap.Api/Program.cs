@@ -33,9 +33,11 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
-app.UseHttpsRedirection();
-
+// Use CORS before other middleware
 app.UseCors("AllowClient");
+
+// Comment out HTTPS redirection for development
+// app.UseHttpsRedirection();
 
 app.MapControllers();
 
