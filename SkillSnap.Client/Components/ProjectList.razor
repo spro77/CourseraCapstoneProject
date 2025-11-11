@@ -1,48 +1,73 @@
 @* ProjectList Component - Displays a list of projects *@
+@using SkillSnap.Client.Models
+@using SkillSnap.Client.Services
+@inject ProjectService ProjectService
 
 <div class="project-list">
     <h3>Projects</h3>
-    @foreach (var project in Projects)
+
+    @if (isLoading)
     {
-        <div class="project-item">
-            <img src="@project.ImageUrl" alt="@project.Title" class="project-image" />
-            <div class="project-details">
-                <h4>@project.Title</h4>
-                <p>@project.Description</p>
-            </div>
-        </div>
+        <p><em>Loading projects...</em></p>
     }
+    else if (!projects.Any())
+    {
+        <p><em>No projects found. Add some data using the /api/seed endpoint!</em></p>
+    }
+    else
+    {
+        @foreach (var project in projects)
+        {
+            <div class="project-item">
+                <img src="@project.ImageUrl" alt="@project.Title" class="project-image" />
+                <div class="project-details">
+                    <h4>@project.Title</h4>
+                    <p>@project.Description</p>
+                </div>
+            </div>
+        }
+    }
+
+    <div class="add-project-form">
+        <h4>Add New Project</h4>
+        <input type="text" @bind="newProject.Title" placeholder="Project Title" class="form-input" />
+        <input type="text" @bind="newProject.Description" placeholder="Description" class="form-input" />
+        <input type="text" @bind="newProject.ImageUrl" placeholder="Image URL" class="form-input" />
+        <input type="number" @bind="newProject.PortfolioUserId" placeholder="User ID (default: 1)" class="form-input" />
+        <button @onclick="AddProject" class="btn-add">Add Project</button>
+    </div>
 </div>
 
 @code {
-    // Placeholder data - dummy projects
-    private List<ProjectItem> Projects = new List<ProjectItem>
-    {
-        new ProjectItem
-        {
-            Title = "Task Tracker",
-            Description = "Manage tasks effectively with this task tracking application.",
-            ImageUrl = "https://via.placeholder.com/100"
-        },
-        new ProjectItem
-        {
-            Title = "Weather App",
-            Description = "Forecast weather using APIs and display current conditions.",
-            ImageUrl = "https://via.placeholder.com/100"
-        },
-        new ProjectItem
-        {
-            Title = "E-Commerce Store",
-            Description = "Online shopping platform with product catalog and checkout.",
-            ImageUrl = "https://via.placeholder.com/100"
-        }
-    };
+    private List<Project> projects = new List<Project>();
+    private Project newProject = new Project { PortfolioUserId = 1 };
+    private bool isLoading = true;
 
-    private class ProjectItem
+    protected override async Task OnInitializedAsync()
     {
-        public string Title { get; set; } = string.Empty;
-        public string Description { get; set; } = string.Empty;
-        public string ImageUrl { get; set; } = string.Empty;
+        await LoadProjects();
+    }
+
+    private async Task LoadProjects()
+    {
+        isLoading = true;
+        projects = await ProjectService.GetProjectsAsync();
+        isLoading = false;
+    }
+
+    private async Task AddProject()
+    {
+        if (string.IsNullOrWhiteSpace(newProject.Title))
+        {
+            return;
+        }
+
+        var addedProject = await ProjectService.AddProjectAsync(newProject);
+        if (addedProject != null)
+        {
+            await LoadProjects();
+            newProject = new Project { PortfolioUserId = 1 };
+        }
     }
 }
 
@@ -95,5 +120,44 @@
         margin: 0;
         color: #666;
         line-height: 1.5;
+    }
+
+    .add-project-form {
+        margin-top: 2rem;
+        padding: 1.5rem;
+        border: 2px dashed #ddd;
+        border-radius: 8px;
+        background-color: #f9f9f9;
+    }
+
+    .add-project-form h4 {
+        margin-top: 0;
+        margin-bottom: 1rem;
+        color: #333;
+    }
+
+    .form-input {
+        display: block;
+        width: 100%;
+        padding: 0.5rem;
+        margin-bottom: 0.75rem;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 1rem;
+    }
+
+    .btn-add {
+        padding: 0.75rem 1.5rem;
+        background-color: #4caf50;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    .btn-add:hover {
+        background-color: #45a049;
     }
 </style>
