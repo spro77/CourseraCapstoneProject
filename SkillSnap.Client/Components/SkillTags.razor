@@ -1,0 +1,104 @@
+@* SkillTags Component - Displays skills in a tag-style list *@
+
+<div class="skill-tags">
+    <h3>Skills</h3>
+    <div class="tags-container">
+        @foreach (var skill in Skills)
+        {
+            <div class="skill-tag @GetLevelClass(skill.Level)">
+                <span class="skill-name">@skill.Name</span>
+                <span class="skill-level">@skill.Level</span>
+            </div>
+        }
+    </div>
+</div>
+
+@code {
+    // Placeholder data - dummy skills
+    private List<SkillItem> Skills = new List<SkillItem>
+    {
+        new SkillItem { Name = "C#", Level = "Advanced" },
+        new SkillItem { Name = "Blazor", Level = "Intermediate" },
+        new SkillItem { Name = "JavaScript", Level = "Advanced" },
+        new SkillItem { Name = "React", Level = "Intermediate" },
+        new SkillItem { Name = "SQL", Level = "Advanced" },
+        new SkillItem { Name = "Docker", Level = "Beginner" },
+        new SkillItem { Name = "Azure", Level = "Intermediate" }
+    };
+
+    private class SkillItem
+    {
+        public string Name { get; set; } = string.Empty;
+        public string Level { get; set; } = string.Empty;
+    }
+
+    private string GetLevelClass(string level)
+    {
+        return level.ToLower() switch
+        {
+            "advanced" => "level-advanced",
+            "intermediate" => "level-intermediate",
+            "beginner" => "level-beginner",
+            _ => ""
+        };
+    }
+}
+
+<style>
+    .skill-tags {
+        padding: 1rem;
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    .skill-tags h3 {
+        font-size: 1.8rem;
+        margin-bottom: 1rem;
+        color: #333;
+    }
+
+    .tags-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+    }
+
+    .skill-tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        font-weight: 500;
+        transition: transform 0.2s;
+    }
+
+    .skill-tag:hover {
+        transform: translateY(-2px);
+    }
+
+    .skill-name {
+        font-weight: 600;
+    }
+
+    .skill-level {
+        font-size: 0.8rem;
+        opacity: 0.8;
+    }
+
+    .level-advanced {
+        background-color: #4caf50;
+        color: white;
+    }
+
+    .level-intermediate {
+        background-color: #2196f3;
+        color: white;
+    }
+
+    .level-beginner {
+        background-color: #ff9800;
+        color: white;
+    }
+</style>

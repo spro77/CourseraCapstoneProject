@@ -1,0 +1,56 @@
+@* ProfileCard Component - Displays user profile information *@
+
+<div class="profile-card">
+    <div class="profile-image">
+        <img src="@ProfileImageUrl" alt="@Name" />
+    </div>
+    <div class="profile-info">
+        <h2>@Name</h2>
+        <p class="bio">@Bio</p>
+    </div>
+</div>
+
+@code {
+    // Placeholder data
+    private string Name = "Jordan Developer";
+    private string Bio = "Full-stack developer passionate about learning new tech.";
+    private string ProfileImageUrl = "https://via.placeholder.com/150";
+}
+
+<style>
+    .profile-card {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 2rem;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        background-color: #f9f9f9;
+        max-width: 400px;
+        margin: 1rem auto;
+    }
+
+    .profile-image img {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+
+    .profile-info {
+        text-align: center;
+        margin-top: 1rem;
+    }
+
+    .profile-info h2 {
+        margin: 0.5rem 0;
+        font-size: 1.5rem;
+        color: #333;
+    }
+
+    .bio {
+        color: #666;
+        font-size: 1rem;
+        margin: 0.5rem 0;
+    }
+</style>

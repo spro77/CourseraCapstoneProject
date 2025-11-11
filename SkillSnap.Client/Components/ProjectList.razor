@@ -1,0 +1,99 @@
+@* ProjectList Component - Displays a list of projects *@
+
+<div class="project-list">
+    <h3>Projects</h3>
+    @foreach (var project in Projects)
+    {
+        <div class="project-item">
+            <img src="@project.ImageUrl" alt="@project.Title" class="project-image" />
+            <div class="project-details">
+                <h4>@project.Title</h4>
+                <p>@project.Description</p>
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    // Placeholder data - dummy projects
+    private List<ProjectItem> Projects = new List<ProjectItem>
+    {
+        new ProjectItem
+        {
+            Title = "Task Tracker",
+            Description = "Manage tasks effectively with this task tracking application.",
+            ImageUrl = "https://via.placeholder.com/100"
+        },
+        new ProjectItem
+        {
+            Title = "Weather App",
+            Description = "Forecast weather using APIs and display current conditions.",
+            ImageUrl = "https://via.placeholder.com/100"
+        },
+        new ProjectItem
+        {
+            Title = "E-Commerce Store",
+            Description = "Online shopping platform with product catalog and checkout.",
+            ImageUrl = "https://via.placeholder.com/100"
+        }
+    };
+
+    private class ProjectItem
+    {
+        public string Title { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
+        public string ImageUrl { get; set; } = string.Empty;
+    }
+}
+
+<style>
+    .project-list {
+        padding: 1rem;
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    .project-list h3 {
+        font-size: 1.8rem;
+        margin-bottom: 1rem;
+        color: #333;
+    }
+
+    .project-item {
+        display: flex;
+        gap: 1rem;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        background-color: #fff;
+        transition: box-shadow 0.3s;
+    }
+
+    .project-item:hover {
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .project-image {
+        width: 100px;
+        height: 100px;
+        object-fit: cover;
+        border-radius: 4px;
+    }
+
+    .project-details {
+        flex: 1;
+    }
+
+    .project-details h4 {
+        margin: 0 0 0.5rem 0;
+        font-size: 1.3rem;
+        color: #333;
+    }
+
+    .project-details p {
+        margin: 0;
+        color: #666;
+        line-height: 1.5;
+    }
+</style>

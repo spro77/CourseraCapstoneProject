@@ -1,0 +1,37 @@
+﻿@page "/"
+@using SkillSnap.Client.Components
+
+<PageTitle>SkillSnap - Portfolio Tracker</PageTitle>
+
+<div class="container">
+    <h1>SkillSnap Portfolio</h1>
+    <p>Your full-stack portfolio and project tracker</p>
+
+    <ProfileCard />
+
+    <ProjectList />
+
+    <SkillTags />
+</div>
+
+<style>
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem;
+    }
+
+    .container h1 {
+        text-align: center;
+        font-size: 2.5rem;
+        color: #333;
+        margin-bottom: 0.5rem;
+    }
+
+    .container > p {
+        text-align: center;
+        color: #666;
+        font-size: 1.2rem;
+        margin-bottom: 2rem;
+    }
+</style>
