@@ -1,7 +1,9 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using SkillSnap.Api.Models;
+using System.Diagnostics;
 
 namespace SkillSnap.Api.Controllers
 {
@@ -10,24 +12,56 @@ namespace SkillSnap.Api.Controllers
     public class ProjectsController : ControllerBase
     {
         private readonly SkillSnapContext _context;
+        private readonly IMemoryCache _cache;
+        private readonly ILogger<ProjectsController> _logger;
+        private const string ProjectsCacheKey = "projects_list";
+        private static readonly TimeSpan CacheDuration = TimeSpan.FromMinutes(5);
 
-        public ProjectsController(SkillSnapContext context)
+        public ProjectsController(
+            SkillSnapContext context,
+            IMemoryCache cache,
+            ILogger<ProjectsController> logger)
         {
             _context = context;
+            _cache = cache;
+            _logger = logger;
         }
 
         // GET: api/projects
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Project>>> GetProjects()
         {
-            return await _context.Projects.ToListAsync();
+            var stopwatch = Stopwatch.StartNew();
+
+            if (!_cache.TryGetValue(ProjectsCacheKey, out List<Project>? projects))
+            {
+                _logger.LogInformation("Cache miss for projects list - fetching from database");
+
+                projects = await _context.Projects
+                    .AsNoTracking()
+                    .ToListAsync();
+
+                _cache.Set(ProjectsCacheKey, projects, CacheDuration);
+
+                stopwatch.Stop();
+                _logger.LogInformation("Projects loaded from database in {ElapsedMs}ms", stopwatch.ElapsedMilliseconds);
+            }
+            else
+            {
+                stopwatch.Stop();
+                _logger.LogInformation("Cache hit for projects list - returned in {ElapsedMs}ms", stopwatch.ElapsedMilliseconds);
+            }
+
+            return Ok(projects);
         }
 
         // GET: api/projects/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Project>> GetProject(int id)
         {
-            var project = await _context.Projects.FindAsync(id);
+            var project = await _context.Projects
+                .AsNoTracking()
+                .FirstOrDefaultAsync(p => p.Id == id);
 
             if (project == null)
             {
@@ -44,6 +78,10 @@ namespace SkillSnap.Api.Controllers
         {
             _context.Projects.Add(project);
             await _context.SaveChangesAsync();
+
+            // Invalidate cache after modification
+            _cache.Remove(ProjectsCacheKey);
+            _logger.LogInformation("Cache invalidated after creating project {ProjectId}", project.Id);
 
             return CreatedAtAction(nameof(GetProject), new { id = project.Id }, project);
         }
@@ -63,6 +101,10 @@ namespace SkillSnap.Api.Controllers
             try
             {
                 await _context.SaveChangesAsync();
+
+                // Invalidate cache after modification
+                _cache.Remove(ProjectsCacheKey);
+                _logger.LogInformation("Cache invalidated after updating project {ProjectId}", id);
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -92,6 +134,10 @@ namespace SkillSnap.Api.Controllers
 
             _context.Projects.Remove(project);
             await _context.SaveChangesAsync();
+
+            // Invalidate cache after deletion
+            _cache.Remove(ProjectsCacheKey);
+            _logger.LogInformation("Cache invalidated after deleting project {ProjectId}", id);
 
             return NoContent();
         }

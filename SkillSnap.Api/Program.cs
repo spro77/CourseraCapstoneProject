@@ -54,6 +54,9 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddAuthorization();
 
+// Add in-memory caching
+builder.Services.AddMemoryCache();
+
 // Add controllers
 builder.Services.AddControllers();
 
