@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SkillSnap.Api.Models;
@@ -38,6 +39,7 @@ namespace SkillSnap.Api.Controllers
 
         // POST: api/projects
         [HttpPost]
+        [Authorize]
         public async Task<ActionResult<Project>> PostProject(Project project)
         {
             _context.Projects.Add(project);
@@ -48,6 +50,7 @@ namespace SkillSnap.Api.Controllers
 
         // PUT: api/projects/5
         [HttpPut("{id}")]
+        [Authorize]
         public async Task<IActionResult> PutProject(int id, Project project)
         {
             if (id != project.Id)
@@ -78,6 +81,7 @@ namespace SkillSnap.Api.Controllers
 
         // DELETE: api/projects/5
         [HttpDelete("{id}")]
+        [Authorize]
         public async Task<IActionResult> DeleteProject(int id)
         {
             var project = await _context.Projects.FindAsync(id);

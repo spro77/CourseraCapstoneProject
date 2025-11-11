@@ -1,5 +1,10 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using SkillSnap.Api;
+using SkillSnap.Api.Models;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,6 +15,44 @@ builder.Services.AddOpenApi();
 // Add DbContext with SQLite
 builder.Services.AddDbContext<SkillSnapContext>(options =>
     options.UseSqlite("Data Source=skillsnap.db"));
+
+// Add Identity
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
+{
+    // Password settings (relaxed for development)
+    options.Password.RequireDigit = false;
+    options.Password.RequireLowercase = false;
+    options.Password.RequireUppercase = false;
+    options.Password.RequireNonAlphanumeric = false;
+    options.Password.RequiredLength = 4;
+})
+.AddEntityFrameworkStores<SkillSnapContext>()
+.AddDefaultTokenProviders();
+
+// Add JWT Authentication
+var jwtKey = "YourSuperSecretKeyForJWTTokenGeneration123!";
+var key = Encoding.ASCII.GetBytes(jwtKey);
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.RequireHttpsMetadata = false;
+    options.SaveToken = true;
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(key),
+        ValidateIssuer = false,
+        ValidateAudience = false,
+        ClockSkew = TimeSpan.Zero
+    };
+});
+
+builder.Services.AddAuthorization();
 
 // Add controllers
 builder.Services.AddControllers();
@@ -38,6 +81,10 @@ app.UseCors("AllowClient");
 
 // Comment out HTTPS redirection for development
 // app.UseHttpsRedirection();
+
+// Authentication & Authorization
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapControllers();
 

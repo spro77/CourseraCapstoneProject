@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SkillSnap.Api.Models;
@@ -38,6 +39,7 @@ namespace SkillSnap.Api.Controllers
 
         // POST: api/skills
         [HttpPost]
+        [Authorize]
         public async Task<ActionResult<Skill>> PostSkill(Skill skill)
         {
             _context.Skills.Add(skill);
@@ -48,6 +50,7 @@ namespace SkillSnap.Api.Controllers
 
         // PUT: api/skills/5
         [HttpPut("{id}")]
+        [Authorize]
         public async Task<IActionResult> PutSkill(int id, Skill skill)
         {
             if (id != skill.Id)
@@ -78,6 +81,7 @@ namespace SkillSnap.Api.Controllers
 
         // DELETE: api/skills/5
         [HttpDelete("{id}")]
+        [Authorize]
         public async Task<IActionResult> DeleteSkill(int id)
         {
             var skill = await _context.Skills.FindAsync(id);
